@@ -20,6 +20,14 @@
     "LICENSE"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruby1304/dsh-password-shield.git"
+  },
+  "homepage": "https://github.com/ruby1304/dsh-password-shield#readme",
+  "bugs": {
+    "url": "https://github.com/ruby1304/dsh-password-shield/issues"
+  },
   "keywords": [
     "deepseek",
     "deepseek-harness",
