@@ -1,0 +1,55 @@
+{
+  "name": "dsh-password-shield",
+  "version": "0.1.0",
+  "description": "Silence Chrome/iCloud password-manager prompts over DeepSeek Harness API-key inputs: rewrites password-type secret fields into masked text fields so browser password managers never treat DSH API keys as account passwords.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "COMPARISON.md",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "chrome",
+    "password-manager",
+    "api-key",
+    "autofill"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-cordis-client-runner"
+      ],
+      "immediately": true
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "prepublishOnly": "npm test"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vitest": "^4.0.0"
+  }
+}
