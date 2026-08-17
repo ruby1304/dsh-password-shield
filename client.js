@@ -1,14 +1,23 @@
 /**
  * dsh-password-shield — browser half (client bundle).
  *
- * DeepSeek Harness renders API-key inputs (Models page, official-DeepSeek
- * onboarding dialog, and Plugins > Web Search card) as
- * `<input type="password" autocomplete="off">`. Chrome deliberately ignores
- * `autocomplete="off"` on password fields and may show its native
- * save/update/use-password bubble over them; iCloud Passwords and similar
- * extensions do the same. This bundle keeps every secret field visually
- * masked while changing its real input type to `text`, so browser password
- * managers never classify DSH API keys as account passwords.
+ * Two password-manager annoyances live in DSH's web UI:
+ *
+ * 1. API-key inputs (Models page, official-DeepSeek onboarding dialog, and
+ *    Plugins > Web Search card) render as `<input type="password">`. Chrome's
+ *    built-in password manager deliberately ignores `autocomplete="off"` on
+ *    password fields and shows its native save/autofill bubble over them.
+ *    This bundle converts those fields into masked `type="text"` fields,
+ *    which Chrome's password manager never treats as passwords.
+ * 2. The iCloud Passwords Chrome extension runs WebKit-style form heuristics
+ *    over the page and pops its completion-list bubble ("打开'密码' App /
+ *    查找和创建密码") over fields it classifies as credential fields — on DSH
+ *    conversation pages this shows up floating over the chat composer. The
+ *    bubble is an in-page `<div popover>` whose open shadow root hosts an
+ *    iframe pointing at the extension's `completion_list.html`. This bundle
+ *    watches the DOM and removes that container the moment it is inserted,
+ *    so the bubble never appears on DSH pages. (DSH itself ships no popover
+ *    whose shadow root hosts such an iframe, so the blocker is surgical.)
  *
  * The bundle has no imports and only talks to the DSH client module loader.
  */
@@ -20,6 +29,8 @@
   var CLASS = 'dsh-password-shield-masked'
   var STYLE_ID = 'dsh-password-shield-style'
   var SWEEP_INTERVAL_MS = 2000
+  /** iCloud Passwords serves its in-page completion list from this resource. */
+  var COMPLETION_LIST_PATH = 'completion_list'
 
   /** Set an attribute only when the value would change (avoids observer loops). */
   function setAttr(node, name, value) {
@@ -72,6 +83,56 @@
     if (form) setAttr(form, 'autocomplete', 'off')
   }
 
+  /**
+   * Whether a node hosts the iCloud Passwords completion list: the extension
+   * appends a `<div popover>` to <body> whose open shadow root contains an
+   * iframe pointing at its `completion_list.html` resource.
+   */
+  function isCompletionListHost(node) {
+    if (!node || node.nodeType !== 1) return false
+    var root = node.shadowRoot
+    if (!root) return false
+    try {
+      return root.querySelector('iframe[src*="' + COMPLETION_LIST_PATH + '"]') !== null
+    } catch (_error) {
+      return false
+    }
+  }
+
+  /**
+   * Neutralize one completion-list host without detaching it: remove the
+   * iframe from its shadow root and force it invisible. The element stays
+   * connected so the extension's popover bookkeeping (`showPopover` /
+   * `hidePopover` / `isVisible`) never throws; it just renders nothing.
+   */
+  function neutralizeCompletionListHost(node) {
+    if (!isCompletionListHost(node)) return false
+    try {
+      var frames = node.shadowRoot.querySelectorAll('iframe[src*="' + COMPLETION_LIST_PATH + '"]')
+      for (var i = 0; i < frames.length; i++) frames[i].remove()
+    } catch (_error) {}
+    if (node.style) {
+      node.style.setProperty('display', 'none', 'important')
+      node.style.setProperty('visibility', 'hidden', 'important')
+      node.style.setProperty('opacity', '0', 'important')
+      node.style.setProperty('pointer-events', 'none', 'important')
+      node.style.setProperty('left', '-999999px', 'important')
+      node.style.setProperty('top', '-999999px', 'important')
+    }
+    return true
+  }
+
+  /** Scan one document for completion-list hosts (top-level and popover-marked). */
+  function removeCompletionListPopups(doc) {
+    if (!doc || !doc.body) return
+    var candidates = doc.body.querySelectorAll('[popover]')
+    for (var i = 0; i < candidates.length; i++) neutralizeCompletionListHost(candidates[i])
+    // Direct body children are cheap to probe even without the attribute.
+    for (var child = doc.body.firstElementChild; child; child = child.nextElementSibling) {
+      if (child.shadowRoot) neutralizeCompletionListHost(child)
+    }
+  }
+
   /** Visit every input under one root, descending into open shadow roots. */
   function sweepTree(root, seen) {
     if (!root) return
@@ -106,6 +167,7 @@
 
   /** Full pass over the document and all open shadow trees. */
   function sweepDocument(doc) {
+    removeCompletionListPopups(doc)
     sweepTree(doc, new Set())
   }
 
@@ -124,6 +186,9 @@
       for (var j = 0; j < mutation.addedNodes.length; j++) {
         var added = mutation.addedNodes[j]
         if (!added || added.nodeType !== 1) continue
+        // The iCloud completion list is appended to <body> already complete
+        // with its shadow iframe — neutralize it before it ever paints.
+        if (added.shadowRoot && neutralizeCompletionListHost(added)) continue
         if (added.tagName === 'INPUT') {
           if (isPasswordInput(added) || added.getAttribute(MARK) === 'masked') maskInput(added)
         }

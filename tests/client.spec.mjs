@@ -123,4 +123,53 @@ describe('dsh-password-shield', () => {
     expect(form.getAttribute('autocomplete')).toBe('off')
     expect(input.type).toBe('text')
   })
+
+  function makeCompletionListHost() {
+    const host = document.createElement('div')
+    host.setAttribute('popover', 'manual')
+    const shadow = host.attachShadow({ mode: 'open' })
+    const frame = document.createElement('iframe')
+    frame.src = 'chrome-extension://pejdijmoenmkgeppbflobdenhhabjlaj/completion_list.html?username=&isDark=false'
+    shadow.appendChild(frame)
+    return host
+  }
+
+  it('neutralizes a pre-existing iCloud completion-list popup', () => {
+    const host = makeCompletionListHost()
+    document.body.appendChild(host)
+
+    plugin.apply(makeCtx())
+
+    expect(host.shadowRoot.querySelectorAll('iframe').length).toBe(0)
+    expect(host.style.display).toBe('none')
+    expect(host.style.visibility).toBe('hidden')
+    // The host stays connected so the extension's popover bookkeeping never throws.
+    expect(host.isConnected).toBe(true)
+  })
+
+  it('neutralizes an iCloud completion-list popup inserted after activation', async () => {
+    plugin.apply(makeCtx())
+
+    const host = makeCompletionListHost()
+    document.body.appendChild(host)
+    await tick()
+
+    expect(host.shadowRoot.querySelectorAll('iframe').length).toBe(0)
+    expect(host.style.display).toBe('none')
+  })
+
+  it('leaves ordinary popovers (no completion-list iframe) untouched', async () => {
+    plugin.apply(makeCtx())
+
+    const popover = document.createElement('div')
+    popover.setAttribute('popover', 'manual')
+    const shadow = popover.attachShadow({ mode: 'open' })
+    shadow.appendChild(document.createElement('span'))
+    document.body.appendChild(popover)
+    await tick()
+
+    expect(popover.isConnected).toBe(true)
+    expect(popover.style.display).toBe('')
+    expect(popover.shadowRoot.querySelectorAll('span').length).toBe(1)
+  })
 })

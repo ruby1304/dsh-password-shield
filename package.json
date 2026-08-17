@@ -1,7 +1,7 @@
 {
   "name": "dsh-password-shield",
-  "version": "0.1.0",
-  "description": "Silence Chrome/iCloud password-manager prompts over DeepSeek Harness API-key inputs: rewrites password-type secret fields into masked text fields so browser password managers never treat DSH API keys as account passwords.",
+  "version": "0.2.0",
+  "description": "Silence browser password-manager prompts in DeepSeek Harness web: rewrites password-type API-key fields into masked text fields (Chrome built-in manager) and blocks the iCloud Passwords completion-list bubble (the popup that floats over the chat composer).",
   "type": "module",
   "main": "index.js",
   "exports": {
