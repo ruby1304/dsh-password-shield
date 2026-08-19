@@ -30,21 +30,33 @@ It intentionally does **not**:
 ## Install
 
 ```bash
-dsh plugin --profile web add github:ruby1304/dsh-password-shield
+dsh plugin --profile web add dsh-password-shield@0.3.0 --save-exact --ignore-scripts
 # Restart dsh web.
 ```
 
-After an npm release:
+For a reviewed checkout during development only:
 
 ```bash
-dsh plugin --profile web add dsh-password-shield
+dsh plugin --profile web add github:ruby1304/dsh-password-shield#<full-commit-sha> --save-exact --ignore-scripts
 ```
+
+Never use a mutable branch or `link:` checkout as production state.
+
+## Privacy and security
+
+- The Host half is a no-op. It has no credential, filesystem, process or network access.
+- The browser half never reads input values and never changes password or API-key fields.
+- Matching is limited to the public iCloud Passwords extension ID and a `completion_list.html` iframe inside an open shadow root.
+- The plugin sends no telemetry and stores no state.
+
+Uninstall with `dsh plugin --profile web remove dsh-password-shield`, restart DSH Web, and reload open pages. A completion-list iframe already removed from the current document is restored only by that page reload.
 
 ## Tests
 
 ```bash
 npm install
-npm test
+npm run check
+npm run release:check
 ```
 
 Tests cover pre-existing and dynamically inserted iCloud completion lists, ordinary DSH popovers, unrelated extension iframes, and the guarantee that password/text inputs remain untouched.

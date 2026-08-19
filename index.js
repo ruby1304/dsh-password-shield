@@ -1,11 +1,9 @@
 /**
- * dsh-password-shield — DeepSeek Harness plugin (host half is intentionally a
- * no-op). The entire fix lives in the browser bundle served from `./client`:
- * it rewrites API-key `<input type="password">` elements (rendered by the
- * official Models / Plugins settings surfaces and by third-party panels) into
- * masked `type="text"` fields. Chrome and iCloud Passwords only trigger their
- * save/autofill bubbles for real password fields, so the conversion stops the
- * ugly prompt without touching DSH credentials.
+ * dsh-password-shield — client-only DeepSeek Harness plugin.
+ *
+ * The browser bundle removes only the iCloud Passwords completion-list iframe
+ * that can float over the chat composer. The Host half is intentionally a
+ * no-op: it has no credential, filesystem or network access.
  *
  * @module dsh-password-shield
  */
