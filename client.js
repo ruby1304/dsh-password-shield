@@ -2,11 +2,18 @@
 (function () {
   'use strict'
   var ID = 'dsh-password-shield'
-  var PATH = 'completion_list.html'
+  var EXTENSION_ID = 'pejdijmoenmkgeppbflobdenhhabjlaj'
+  var PATH = '/completion_list.html'
   var INTERVAL = 2000
+  function isCompletionListFrame(frame) {
+    try {
+      var url = new URL(frame.getAttribute('src'), document.baseURI)
+      return url.protocol === 'chrome-extension:' && url.hostname === EXTENSION_ID && url.pathname.endsWith(PATH)
+    } catch (_error) { return false }
+  }
   function frames(host) {
     if (host == null || host.nodeType !== 1 || host.shadowRoot == null) return []
-    try { return host.shadowRoot.querySelectorAll('iframe[src*="' + PATH + '"]') }
+    try { return Array.prototype.filter.call(host.shadowRoot.querySelectorAll('iframe[src]'), isCompletionListFrame) }
     catch (_error) { return [] }
   }
   function neutralize(host) {

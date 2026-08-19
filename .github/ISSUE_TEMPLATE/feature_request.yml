@@ -1,0 +1,28 @@
+name: Feature request
+description: Propose a narrowly scoped compatibility guard.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Explain the browser-owned surface and why DSH page markup cannot solve it directly.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Exact safe matching boundary
+      description: Identify origin, resource, DOM shape, false-positive risks and required negative tests.
+    validations:
+      required: true
+  - type: checkboxes
+    id: invariants
+    attributes:
+      label: Invariants
+      options:
+        - label: The proposal does not read field values or page content.
+          required: true
+        - label: The proposal does not add network, storage or Host permissions.
+          required: true

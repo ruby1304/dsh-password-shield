@@ -1,7 +1,7 @@
 # dsh-password-shield bundle layer: a client-only row. The package's host
 # half is a no-op; the browser half (served at
-# /plugins/dsh-password-shield/client.js) installs a DOM guard that converts
-# secret inputs before Chrome's password manager classifies them.
+# /plugins/dsh-password-shield/client.js) removes only the iCloud Passwords
+# completion-list iframe. It never reads or rewrites credential fields.
 - insert:
     - id: password-shield
       name: 'dsh-password-shield'

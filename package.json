@@ -17,6 +17,10 @@
     "COMPARISON.md",
     "README.md",
     "README.zh-CN.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "THIRD_PARTY_NOTICES.md",
     "LICENSE"
   ],
   "license": "MIT",
@@ -35,7 +39,6 @@
     "dsh-plugin",
     "chrome",
     "password-manager",
-    "api-key",
     "autofill"
   ],
   "dsh": {
@@ -54,10 +57,20 @@
   },
   "scripts": {
     "test": "vitest run",
-    "prepublishOnly": "npm test"
+    "check:repository": "node ./scripts/repository-check.mjs",
+    "check": "npm test && npm run check:repository",
+    "release:check": "npm run check && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
+    "prepack": "npm run check"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22"
   },
   "devDependencies": {
-    "jsdom": "^26.1.0",
-    "vitest": "^4.0.0"
+    "jsdom": "30.0.1",
+    "vitest": "4.1.11"
   }
 }

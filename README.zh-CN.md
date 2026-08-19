@@ -30,21 +30,33 @@ iCloud 密码 Chrome 扩展会对每个网页运行 WebKit 风格的凭证字段
 ## 安装
 
 ```bash
-dsh plugin --profile web add github:ruby1304/dsh-password-shield
+dsh plugin --profile web add dsh-password-shield@0.3.0 --save-exact --ignore-scripts
 # 重启 dsh web
 ```
 
-npm 发布后也可以：
+仅在开发时使用经过审阅的 checkout：
 
 ```bash
-dsh plugin --profile web add dsh-password-shield
+dsh plugin --profile web add github:ruby1304/dsh-password-shield#<完整-commit-sha> --save-exact --ignore-scripts
 ```
+
+生产环境不要使用可变分支或 `link:` checkout。
+
+## 隐私与安全
+
+- Host 侧为空实现，不读取凭据、文件系统，不启动进程，也不发起网络请求。
+- 浏览器侧不读取输入值，也不修改密码或 API Key 输入框。
+- 匹配范围限定为公开的 iCloud Passwords 扩展 ID，以及开放 shadow root 内的 `completion_list.html` iframe。
+- 插件不发送遥测，也不保存状态。
+
+卸载命令为 `dsh plugin --profile web remove dsh-password-shield`。重启 DSH Web 并刷新已打开页面后生效；当前页面中已被移除的 iframe 只能通过刷新页面恢复。
 
 ## 测试
 
 ```bash
 npm install
-npm test
+npm run check
+npm run release:check
 ```
 
 测试覆盖：页面已有/动态插入的 iCloud 浮窗、普通 DSH popover、其他扩展 iframe，以及“绝不修改密码框和普通文本框”的回归保证。

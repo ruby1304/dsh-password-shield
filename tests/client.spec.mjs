@@ -21,12 +21,12 @@ afterEach(async () => {
   await tick()
 })
 
-function makeCompletionListHost(path = 'completion_list.html') {
+function makeCompletionListHost(src = 'chrome-extension://pejdijmoenmkgeppbflobdenhhabjlaj/completion_list.html?isDark=false') {
   const host = document.createElement('div')
   host.setAttribute('popover', 'manual')
   const shadow = host.attachShadow({ mode: 'open' })
   const frame = document.createElement('iframe')
-  frame.src = `chrome-extension://pejdijmoenmkgeppbflobdenhhabjlaj/${path}?isDark=false`
+  frame.src = src
   shadow.appendChild(frame)
   return host
 }
@@ -78,7 +78,25 @@ describe('dsh-password-shield', () => {
 
   it('does not block unrelated extension iframes', async () => {
     plugin.apply(makeCtx())
-    const host = makeCompletionListHost('some_other_popup.html')
+    const host = makeCompletionListHost('chrome-extension://pejdijmoenmkgeppbflobdenhhabjlaj/some_other_popup.html')
+    document.body.appendChild(host)
+    await tick()
+    expect(host.shadowRoot.querySelector('iframe')).not.toBeNull()
+    expect(host.style.display).toBe('')
+  })
+
+  it('does not hide a web page with the same file name', async () => {
+    plugin.apply(makeCtx())
+    const host = makeCompletionListHost('https://example.test/completion_list.html')
+    document.body.appendChild(host)
+    await tick()
+    expect(host.shadowRoot.querySelector('iframe')).not.toBeNull()
+    expect(host.style.display).toBe('')
+  })
+
+  it('does not hide another extension with the same file name', async () => {
+    plugin.apply(makeCtx())
+    const host = makeCompletionListHost('chrome-extension://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/completion_list.html')
     document.body.appendChild(host)
     await tick()
     expect(host.shadowRoot.querySelector('iframe')).not.toBeNull()
