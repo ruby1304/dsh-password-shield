@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 const disposers = []
@@ -101,5 +103,23 @@ describe('dsh-password-shield', () => {
     await tick()
     expect(host.shadowRoot.querySelector('iframe')).not.toBeNull()
     expect(host.style.display).toBe('')
+  })
+})
+
+describe('DSH rc.8 client package contract', () => {
+  it('declares only the Cordis relationship used by the dependency-free client', async () => {
+    const manifest = JSON.parse(await readFile(resolve(process.cwd(), 'package.json'), 'utf8'))
+    expect(manifest.version).toBe('0.3.1')
+    expect(manifest.dsh.client).toEqual({ platform: 'web', inject: [] })
+    expect(manifest.dsh.client).not.toHaveProperty('immediately')
+    expect(manifest.dsh.client).not.toHaveProperty('external')
+    expect(manifest.peerDependencies).toEqual({ '@deepseek-ai/cordis': '4.0.1' })
+    expect(manifest.devDependencies['@deepseek-ai/cordis']).toBe('4.0.1')
+    expect(manifest.dependencies).toBeUndefined()
+    expect(Object.keys(manifest.devDependencies).filter((name) => name.startsWith('@deepseek-ai/dsh-'))).toEqual([])
+  })
+
+  it('requests no dynamic shared modules through dsh.client.inject', () => {
+    expect(plugin.inject).toEqual([])
   })
 })

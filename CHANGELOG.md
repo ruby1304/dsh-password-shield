@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 - 2026-08-20
+
+- Target DeepSeek Harness `0.1.0-rc.8` and its dynamic client package contract.
+- Remove rc.7-era eager activation and unused informational package edges.
+- Declare the matching Cordis peer/development relationship required by rc.8 client packages.
+
 ## 0.3.0 - 2026-08-20
 
 - Remove the earlier password-field rewriting behavior entirely.

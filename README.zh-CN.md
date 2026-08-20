@@ -30,7 +30,7 @@ iCloud 密码 Chrome 扩展会对每个网页运行 WebKit 风格的凭证字段
 ## 安装
 
 ```bash
-dsh plugin --profile web add dsh-password-shield@0.3.0 --save-exact --ignore-scripts
+dsh plugin --profile web add dsh-password-shield@0.3.1 --save-exact --ignore-scripts
 # 重启 dsh web
 ```
 
@@ -41,6 +41,9 @@ dsh plugin --profile web add github:ruby1304/dsh-password-shield#<完整-commit-
 ```
 
 生产环境不要使用可变分支或 `link:` checkout。
+
+`0.3.1` 精确面向 DSH `0.1.0-rc.8`。浏览器 bundle 不请求任何 DSH 内部
+共享模块，只使用 rc.8 的 loader baseline，也不再要求 eager activation。
 
 ## 隐私与安全
 

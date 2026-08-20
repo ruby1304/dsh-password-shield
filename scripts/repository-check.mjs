@@ -11,11 +11,19 @@ function fail(message) {
   process.exitCode = 1
 }
 
-if (pkg.name !== 'dsh-password-shield' || pkg.version !== '0.3.0' || pkg.license !== 'MIT') fail('package identity is unexpected')
+if (pkg.name !== 'dsh-password-shield' || pkg.version !== '0.3.1' || pkg.license !== 'MIT') fail('package identity is unexpected')
 if (pkg.repository?.url !== 'git+https://github.com/ruby1304/dsh-password-shield.git') fail('repository URL must match the public source')
 if (pkg.publishConfig?.access !== 'public' || pkg.publishConfig?.provenance !== true) fail('public provenance publishing is required')
 if (pkg.engines?.node !== '>=22') fail('Node.js support floor must remain explicit')
 if (Object.keys(pkg.dependencies ?? {}).length !== 0) fail('the browser/host runtime must remain dependency-free')
+if (pkg.peerDependencies?.['@deepseek-ai/cordis'] !== '4.0.1'
+  || pkg.devDependencies?.['@deepseek-ai/cordis'] !== '4.0.1') fail('Cordis peer/dev versions must match rc.8')
+if (JSON.stringify(pkg.dsh?.client) !== JSON.stringify({ platform: 'web', inject: [] })) {
+  fail('rc.8 client manifest must have no dynamic package edges or immediate activation')
+}
+if (Object.keys(pkg.devDependencies ?? {}).some(name => name.startsWith('@deepseek-ai/dsh-'))) {
+  fail('dependency-free client must not declare unused DSH internals')
+}
 if (lock.version !== pkg.version || lock.packages?.['']?.version !== pkg.version) fail('package-lock version does not match package.json')
 
 const expectedFiles = [

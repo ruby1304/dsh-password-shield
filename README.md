@@ -30,7 +30,7 @@ It intentionally does **not**:
 ## Install
 
 ```bash
-dsh plugin --profile web add dsh-password-shield@0.3.0 --save-exact --ignore-scripts
+dsh plugin --profile web add dsh-password-shield@0.3.1 --save-exact --ignore-scripts
 # Restart dsh web.
 ```
 
@@ -41,6 +41,10 @@ dsh plugin --profile web add github:ruby1304/dsh-password-shield#<full-commit-sh
 ```
 
 Never use a mutable branch or `link:` checkout as production state.
+
+Version `0.3.1` targets DSH `0.1.0-rc.8` exactly. Its browser bundle has no
+DSH-internal module request, relies only on the rc.8 baseline loader, and does
+not request eager activation.
 
 ## Privacy and security
 
