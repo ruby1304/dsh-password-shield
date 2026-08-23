@@ -106,10 +106,10 @@ describe('dsh-password-shield', () => {
   })
 })
 
-describe('DSH rc.8 client package contract', () => {
+describe('DSH rc.2 client package contract', () => {
   it('declares only the Cordis relationship used by the dependency-free client', async () => {
     const manifest = JSON.parse(await readFile(resolve(process.cwd(), 'package.json'), 'utf8'))
-    expect(manifest.version).toBe('0.3.1')
+    expect(manifest.version).toBe('0.3.2')
     expect(manifest.dsh.client).toEqual({ platform: 'web', inject: [] })
     expect(manifest.dsh.client).not.toHaveProperty('immediately')
     expect(manifest.dsh.client).not.toHaveProperty('external')

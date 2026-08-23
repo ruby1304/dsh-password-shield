@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 - 2026-08-23
+
+- Revalidate the dependency-free client manifest and loader contract against DeepSeek Harness `0.1.1-rc.2`.
+- Keep the exact Cordis-only runtime relationship and add no DSH-internal package edge.
+
 ## 0.3.1 - 2026-08-20
 
 - Target DeepSeek Harness `0.1.0-rc.8` and its dynamic client package contract.

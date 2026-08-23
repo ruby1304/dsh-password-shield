@@ -11,15 +11,15 @@ function fail(message) {
   process.exitCode = 1
 }
 
-if (pkg.name !== 'dsh-password-shield' || pkg.version !== '0.3.1' || pkg.license !== 'MIT') fail('package identity is unexpected')
+if (pkg.name !== 'dsh-password-shield' || pkg.version !== '0.3.2' || pkg.license !== 'MIT') fail('package identity is unexpected')
 if (pkg.repository?.url !== 'git+https://github.com/ruby1304/dsh-password-shield.git') fail('repository URL must match the public source')
 if (pkg.publishConfig?.access !== 'public' || pkg.publishConfig?.provenance !== true) fail('public provenance publishing is required')
 if (pkg.engines?.node !== '>=22') fail('Node.js support floor must remain explicit')
 if (Object.keys(pkg.dependencies ?? {}).length !== 0) fail('the browser/host runtime must remain dependency-free')
 if (pkg.peerDependencies?.['@deepseek-ai/cordis'] !== '4.0.1'
-  || pkg.devDependencies?.['@deepseek-ai/cordis'] !== '4.0.1') fail('Cordis peer/dev versions must match rc.8')
+  || pkg.devDependencies?.['@deepseek-ai/cordis'] !== '4.0.1') fail('Cordis peer/dev versions must match rc.2')
 if (JSON.stringify(pkg.dsh?.client) !== JSON.stringify({ platform: 'web', inject: [] })) {
-  fail('rc.8 client manifest must have no dynamic package edges or immediate activation')
+  fail('rc.2 client manifest must have no dynamic package edges or immediate activation')
 }
 if (Object.keys(pkg.devDependencies ?? {}).some(name => name.startsWith('@deepseek-ai/dsh-'))) {
   fail('dependency-free client must not declare unused DSH internals')
@@ -68,7 +68,7 @@ if (!client.includes("loader.load({ id: ID")) fail('client bundle no longer regi
 if (!client.includes("url.protocol === 'chrome-extension:'") || !client.includes("url.hostname === EXTENSION_ID")) fail('extension-origin guard is missing')
 
 const changelog = await readFile(resolve(root, 'CHANGELOG.md'), 'utf8')
-if (!changelog.startsWith(`# Changelog\n\n## ${pkg.version} - 2026-08-20\n`)) fail('top changelog release must be dated and match package.json')
+if (!changelog.startsWith(`# Changelog\n\n## ${pkg.version} - 2026-08-23\n`)) fail('top changelog release must be dated and match package.json')
 const readme = await readFile(resolve(root, 'README.md'), 'utf8')
 if (!readme.includes(`dsh-password-shield@${pkg.version} --save-exact --ignore-scripts`)) fail('README exact install command is missing')
 
