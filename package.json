@@ -1,6 +1,6 @@
 {
   "name": "dsh-password-shield",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Block the iCloud Passwords completion-list popup that floats over the DeepSeek Harness chat composer.",
   "type": "module",
   "main": "index.js",
@@ -65,10 +65,10 @@
     "node": ">=22"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "4.0.1"
+    "@deepseek-ai/cordis": "4.0.2"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/cordis": "4.0.2",
     "jsdom": "30.0.1",
     "vitest": "4.1.11"
   }

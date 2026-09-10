@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 - 2026-09-10
+
+- Revalidate the dependency-free client manifest and loader contract against DeepSeek Harness `0.1.5-rc.1`.
+- Move the Cordis peer/development relationship to the `4.0.2` generation required by the candidate runtime.
+- Keep the exact Cordis-only runtime relationship and add no DSH-internal package edge.
+
 ## 0.3.2 - 2026-08-23
 
 - Revalidate the dependency-free client manifest and loader contract against DeepSeek Harness `0.1.1-rc.2`.
